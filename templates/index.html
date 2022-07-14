@@ -62,62 +62,6 @@
         }
 
     </style>
-<script>
-    $('#posting_btn').on('click', function () {
-        document.querySelector('.modal-bg').classList.add('show-modal')
-    });
-    $('#sending_btn').on('click', function () {
-        document.querySelector('.modal-bg').classList.remove('show-modal')
-    });
-
-    $(document).ready(function () {
-        listing()
-    })
-
-    function listing() {
-        $.ajax({
-            type: "GET",
-            url: "/post",
-            data: {},
-            success: function (response) {
-                let posts = response['all_post']
-                for (let i = 0; i < posts.length; i++) {
-                    let title = posts[i]['title']
-                    let comment = posts[i]['comment']
-
-                    let temp_html = `<div class="card my-3">
-        <div class="card-content">
-            <div class="content">
-                <span><h1>${title}</h1></span>
-                <span><p>${comment}</p></span>
-            </div>
-        </div>
-    </div>`
-                    $('#cards-box').append(temp_html)
-                }
-            }
-        })
-    }
-
-    function posting() {
-        let title = $('#title').val()
-        let comment = $('#comment').val()
-
-        $.ajax({
-            type: "POST",
-            url: "/post",
-            data: {
-                title_give: title,
-                comment_give: comment
-            },
-            success: function (response) {
-                alert(response['msg'])
-                window.location.reload()
-            }
-        })
-    }
-
-</script>
 
     <title>항해일주</title>
 </head>
@@ -174,5 +118,62 @@
     crossorigin = "anonymous"
 </script>
 
+<script>
+    $('#posting_btn').on('click', function () {
+        document.querySelector('.modal-bg').classList.add('show-modal')
+    });
+    $('#sending_btn').on('click', function () {
+        document.querySelector('.modal-bg').classList.remove('show-modal')
+    });
+
+    $(document).ready(function () {
+        listing()
+    })
+
+    function listing() {
+        $.ajax({
+            type: "GET",
+            url: "/post",
+            data: {},
+            success: function (response) {
+                let posts = response['all_post']
+                for (let i = 0; i < posts.length; i++) {
+                    let title = posts[i]['title']
+                    let comment = posts[i]['comment']
+
+                    let temp_html = `<div class="card my-3">
+        <div class="card-content">
+            <div class="content">
+                <span><h1>${title}</h1></span>
+                <span><p>${comment}</p></span>
+            </div>
+        </div>
+    </div>`
+                    $('#cards-box').append(temp_html)
+                }
+            }
+        })
+    }
+
+    function posting() {
+        let title = $('#title').val()
+        let comment = $('#comment').val()
+
+        $.ajax({
+            type: "POST",
+            url: "/post",
+            data: {
+                title_give: title,
+                comment_give: comment
+            },
+            success: function (response) {
+                alert(response['msg'])
+                window.location.reload()
+            }
+        })
+    }
+
+</script>    
+    
 </body>
 </html>
