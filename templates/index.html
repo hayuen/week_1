@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Bootstrap & bulma CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <!--font awsome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <!--ajax-->
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+    <style>
+        .main-img {
+            background-image: url(static/sample.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 350px;
+        }
+
+        .modal-bg {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            background: rgb(0, 0, 0, 0.5);
+            z-index: 5;
+            display: none;
+        }
+
+        .modal-position-set {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-wh {
+            background: white;
+            width: 1000px;
+            height: 500px;
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .show-modal {
+            display: block;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            get_posts('{{ user_ingo.username }}');
+        })
+    </script>
+
+    <title>항해일주</title>
+</head>
+<body>
+<!--모달-->
+<div class="modal-bg">
+    <div class="modal-position-set">
+        <div class="modal-wh">
+            <div class="container py-4">
+                <input class="input" id="title" type="text" placeholder="제목">
+            </div>
+            <div class="container">
+                <div class="control">
+                    <textarea class="textarea has-fixed-size" id="comment" placeholder="내용을 입력하세요" rows="13"></textarea>
+                </div>
+                <div class="container py-1"></div>
+                <div class="container">
+                    <div class="field is-grouped my-3 is-grouped-right">
+                        <p class="control">
+                            <a class="button is-primary" id="sending_btn" onclick="posting()">
+                                완료
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!--상단-->
+<div class="container">
+    <div class="field is-grouped my-3 is-grouped-right">
+        <p class="control">
+            <a class="button is-primary" id="posting_btn">
+                포스팅하기
+            </a>
+        </p>
+    </div>
+</div>
+<!--메인 이미지-->
+<div class="container">
+    <div class="main-img"></div>
+</div>
+<!--하단-->
+<div class="container" id="cards-box">
+</div>
+
+<script>
+    src = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity = "sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin = "anonymous"
+</script>
+<script>
+    $('#posting_btn').on('click', function () {
+        document.querySelector('.modal-bg').classList.add('show-modal')
+    });
+    $('#sending_btn').on('click', function () {
+        document.querySelector('.modal-bg').classList.remove('show-modal')
+    });
+
+    $(document).ready(function () {
+        listing()
+    })
+
+    function listing() {
+        $.ajax({
+            type: "GET",
+            url: "/post",
+            data: {},
+            success: function (response) {
+                let posts = response['all_post']
+                for (let i = 0; i < posts.length; i++) {
+                    let title = posts[i]['title']
+                    let comment = posts[i]['comment']
+
+                    let temp_html = `<div class="card my-3">
+        <div class="card-content">
+            <div class="content">
+                <span><h1>${title}</h1></span>
+                <span><p>${comment}</p></span>
+            </div>
+        </div>
+    </div>`
+                    $('#cards-box').append(temp_html)
+                }
+            }
+        })
+    }
+
+    function posting() {
+        let title = $('#title').val()
+        let comment = $('#comment').val()
+
+        $.ajax({
+            type: "POST",
+            url: "/post",
+            data: {
+                title_give: title,
+                comment_give: comment
+            },
+            success: function (response) {
+                alert(response['msg'])
+                window.location.reload()
+            }
+        })
+    }
+
+</script>
+
+</body>
+</html>
