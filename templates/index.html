@@ -1,136 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-        <!-- Webpage Title -->
-        <title>Home | SWEETER</title>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-        <meta property="og:title" content="스위터 - 세상을 달달하게"/>
-        <meta property="og:description" content="mini project for Web Plus"/>
-        <meta property="og:image" content="{{ url_for('static', filename='ogimg.png') }}"/>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap & bulma CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
-        <!-- Bulma CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-        <!-- Font Awesome CSS -->
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!--font awsome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Stylish&display=swap" rel="stylesheet">
-        <link href="{{ url_for('static', filename='mystyle.css') }}" rel="stylesheet">
+    <!--ajax-->
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-        <!-- JS -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-        <script src="{{ url_for('static', filename='myjs.js') }}"></script>
+    <style>
+        .main-img {
+            background-image: url(static/sample.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 350px;
+        }
 
+        .modal-bg {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            background: rgb(0, 0, 0, 0.5);
+            z-index: 5;
+            display: none;
+        }
 
-        <script>
-            $(document).ready(function () {
-                get_posts()
-            })
+        .modal-position-set {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-        </script>
+        .modal-wh {
+            background: white;
+            width: 1000px;
+            height: 500px;
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+        }
 
-    </head>
-    <body class="has-navbar-fixed-top">
-        <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="/">
-                    <img src="{{ url_for('static', filename='logo.png') }}">
-                    <strong class="is-sparta"
-                            style="font-family: 'Stylish', sans-serif;font-size: larger;">SWEETER</strong>
-                </a>
+        .show-modal {
+            display: block;
+        }
+
+    </style>
+<script>
+    $('#posting_btn').on('click', function () {
+        document.querySelector('.modal-bg').classList.add('show-modal')
+    });
+    $('#sending_btn').on('click', function () {
+        document.querySelector('.modal-bg').classList.remove('show-modal')
+    });
+
+    $(document).ready(function () {
+        listing()
+    })
+
+    function listing() {
+        $.ajax({
+            type: "GET",
+            url: "/post",
+            data: {},
+            success: function (response) {
+                let posts = response['all_post']
+                for (let i = 0; i < posts.length; i++) {
+                    let title = posts[i]['title']
+                    let comment = posts[i]['comment']
+
+                    let temp_html = `<div class="card my-3">
+        <div class="card-content">
+            <div class="content">
+                <span><h1>${title}</h1></span>
+                <span><p>${comment}</p></span>
             </div>
-        </nav>
-        <section class="section">
-            <article class="media">
-                <figure class="media-left" style="align-self: center">
-			              <a class="image is-32x32" href="/user/{{ user_info.username }}">
-			                  <img class="is-rounded" src="{{ url_for('static', filename=user_info.profile_pic_real) }}">
-			              </a>
-                </figure>
-                <div class="media-content">
-                    <div class="field">
+        </div>
+    </div>`
+                    $('#cards-box').append(temp_html)
+                }
+            }
+        })
+    }
+
+    function posting() {
+        let title = $('#title').val()
+        let comment = $('#comment').val()
+
+        $.ajax({
+            type: "POST",
+            url: "/post",
+            data: {
+                title_give: title,
+                comment_give: comment
+            },
+            success: function (response) {
+                alert(response['msg'])
+                window.location.reload()
+            }
+        })
+    }
+
+</script>
+
+    <title>항해일주</title>
+</head>
+<body>
+<!--모달-->
+<div class="modal-bg">
+    <div class="modal-position-set">
+        <div class="modal-wh">
+            <div class="container py-4">
+                <input class="input" id="title" type="text" placeholder="제목">
+            </div>
+            <div class="container">
+                <div class="control">
+                    <textarea class="textarea has-fixed-size" id="comment" placeholder="내용을 입력하세요" rows="13"></textarea>
+                </div>
+                <div class="container py-1"></div>
+                <div class="container">
+                    <div class="field is-grouped my-3 is-grouped-right">
                         <p class="control">
-                            <input id="input-post" class="input is-rounded" placeholder="무슨 생각을 하고 계신가요?"
-                                   onclick='$("#modal-post").addClass("is-active")'>
+                            <a class="button is-primary" id="sending_btn" onclick="posting()">
+                                완료
+                            </a>
                         </p>
                     </div>
                 </div>
-            </article>
-            <div class="modal" id="modal-post">
-                <div class="modal-background" onclick='$("#modal-post").removeClass("is-active")'></div>
-                <div class="modal-content">
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-content">
-                                <div class="field">
-                                    <p class="control">
-                                        <textarea id="textarea-post" class="textarea"
-                                                  placeholder="무슨 생각을 하고 계신가요?"></textarea>
-                                    </p>
-                                </div>
-                                <nav class="level is-mobile">
-                                    <div class="level-left">
-
-                                    </div>
-                                    <div class="level-right">
-                                        <div class="level-item">
-                                            <a class="button is-sparta" onclick="post()">포스팅하기</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a class="button is-sparta is-outlined"
-                                               onclick='$("#modal-post").removeClass("is-active")'>취소</a>
-                                        </div>
-                                    </div>
-                                </nav>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <button class="modal-close is-large" aria-label="close"
-                        onclick='$("#modal-post").removeClass("is-active")'></button>
             </div>
+        </div>
+    </div>
+</div>
 
-        </section>
-        <section class="section">
-            <div id="post-box" class="container">
-                <div class="box">
-                    <article class="media">
-                        <div class="media-left">
-                            <a class="image is-64x64" href="#">
-                                <img class="is-rounded"
-                                     src={{ url_for("static", filename="profile_pics/profile_placeholder.png") }} alt="Image">
-                            </a>
-                        </div>
-                        <div class="media-content">
-                            <div class="content">
-                                <p>
-                                    <strong>홍길동</strong> <small>@username</small> <small>10분 전</small>
-                                    <br>
-                                    글을 적는 칸
-                                </p>
-                            </div>
-                            <nav class="level is-mobile">
-                                <div class="level-left">
-                                    <a class="level-item is-sparta" aria-label="heart"
-                                       onclick="toggle_like('', 'heart')">
-                                        <span class="icon is-small"><i class="fa fa-heart"
-                                                                       aria-hidden="true"></i></span>&nbsp;<span
-                                            class="like-num">2.7k</span>
-                                    </a>
-                                </div>
+</div>
 
-                            </nav>
-                        </div>
-                    </article>
-                </div>
+<!--상단-->
+<div class="container">
+    <div class="field is-grouped my-3 is-grouped-right">
+        <p class="control">
+            <a class="button is-primary" id="posting_btn">
+                포스팅하기
+            </a>
+        </p>
+    </div>
+</div>
+<!--메인 이미지-->
+<div class="container">
+    <div class="main-img"></div>
+</div>
+<!--하단-->
+<div class="container" id="cards-box">
+</div>
 
-            </div>
-        </section>
-    </body>
+<script>
+    src = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity = "sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin = "anonymous"
+</script>
+
+</body>
 </html>
