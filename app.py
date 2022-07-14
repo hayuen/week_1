@@ -13,7 +13,10 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 
 SECRET_KEY = 'SPARTA'
 
-client = MongoClient('mongodb+srv://test:sparta@cluster0.b2bjd.mongodb.net/Cluster0?retryWrites=true&w=majority', 27017, username="test", password="sparta")
+# 이송현
+client = MongoClient('mongodb+srv://test:sparta@cluster0.apzpx.mongodb.net/Cluster0?retryWrites=true&w=majority')
+
+# client = MongoClient('mongodb+srv://test:sparta@cluster0.b2bjd.mongodb.net/Cluster0?retryWrites=true&w=majority', 27017, username="test", password="sparta")
 db = client.dbsparta_plus_week4
 
 
@@ -28,7 +31,6 @@ def home():
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
-
 
 @app.route('/login')
 def login():
